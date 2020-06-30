@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/HomeFragment"
+        android:title="@string/home"
+        android:icon="@drawable/ic_home"
+        />
+    <item
+        android:id="@+id/VideoFragment"
+        android:title="@string/videos"
+        android:icon="@drawable/ic_videos"
+        />
+    <item
+        android:id="@+id/TweetsFragment"
+        android:title="@string/tweets"
+        android:icon="@drawable/twitter"
+        />
+</menu>

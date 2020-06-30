@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/HomeFragment">
+
+    <fragment
+        android:id="@+id/VideoFragment"
+        android:name="com.e.geomob.ui.detail.video.VideosFragment"
+        android:label="@string/first_fragment_label"
+        tools:layout="@layout/fragment_videos"/>
+    <fragment
+        android:id="@+id/HomeFragment"
+        android:name="com.e.geomob.ui.detail.home.HomeFragment"
+        android:label="@string/second_fragment_label"
+        tools:layout="@layout/fragment_home"/>
+    <fragment
+        android:id="@+id/TweetsFragment"
+        android:name="com.e.geomob.ui.detail.TweetsFragment"
+        android:label="fragment_tweets"
+        tools:layout="@layout/fragment_tweets" />
+</navigation>
