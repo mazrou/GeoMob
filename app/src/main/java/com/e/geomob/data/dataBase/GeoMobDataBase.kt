@@ -4,19 +4,18 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.e.geomob.data.model.HistoricalEvent
-import com.e.geomob.data.model.MediaObject
-import com.e.geomob.data.model.Personality
-import com.e.geomob.data.model.SlideItem
-import com.e.geomob.ui.data.model.Country
+import com.e.geomob.data.model.*
+import com.e.geomob.data.model.Country
 
 @Database(
     version = 2,
     entities = [Country::class,
                 HistoricalEvent::class ,
-                MediaObject:: class ,
                 Personality::class ,
-                SlideItem::class]
+                SlideItem::class ,
+                Tweet::class ,
+                Resource::class,
+                YoutubeVideo::class]
 )
 abstract class GeoMobDataBase :RoomDatabase() {
 
@@ -24,7 +23,7 @@ abstract class GeoMobDataBase :RoomDatabase() {
 
     companion object{
 
-        private const val DATABASE_NAME = "geoMob.db"
+        private const val DATABASE_NAME = "geoMobile.db"
         @Volatile private  var instance  : GeoMobDataBase? = null
         private val LOCK = Any()
 

@@ -1,21 +1,15 @@
-package com.e.geomob.ui.data.model
+package com.e.geomob.data.model
 
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.provider.MediaStore.Images
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.e.geomob.data.model.HistoricalEvent
-import com.e.geomob.data.model.Personality
-import org.w3c.dom.Text
 
 
 @Entity(tableName = "country")
 data class Country(
     @PrimaryKey
-    @ColumnInfo(name = "id")
-    val id : Int ,
+    @ColumnInfo(name = "country_id")
+    val country_id : Int ,
 
     @ColumnInfo(name = "name")
     val name : String ,
@@ -30,17 +24,12 @@ data class Country(
     val population : Float? = null ,
 
     @ColumnInfo(name = "area")
-    val area : Float? =null
-/*
-    val slideShow : List<Int>? = null ,
+    val area : Float? =null ,
 
+    val capital : String ?=null,
+    val currency : String?=null ,
+    val tweet: String? = null
 
-
-    val personalities : List<Personality>? = null,
-
-    val HistoricalEvents  : List<HistoricalEvent> ? =null
-
-*/
 ) {
 
 
@@ -48,14 +37,13 @@ data class Country(
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
         other as Country
-        if (id != other.id) return false
+        if (country_id != other.country_id) return false
         return true
     }
 
     override fun hashCode(): Int {
-        var result = id
+        var result = country_id
         result = 31 * result + name.hashCode()
         return result
     }
-
 }

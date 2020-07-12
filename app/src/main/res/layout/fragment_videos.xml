@@ -8,12 +8,16 @@
     tools:context=".ui.detail.DetailActivity"
     android:background="#f2f2f2">
 
-    <com.e.geomob.ui.recyclerView.VideoPlayerRecyclerView
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/video_recyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/recycler_view"
-        android:orientation="vertical">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-    </com.e.geomob.ui.recyclerView.VideoPlayerRecyclerView>
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

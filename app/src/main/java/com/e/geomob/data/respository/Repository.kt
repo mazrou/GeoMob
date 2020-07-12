@@ -2,24 +2,20 @@ package com.e.geomob.data.respository
 
 import android.util.Log
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
-import com.e.geomob.Debug.TAG
+import com.e.geomob.Debug
 import com.e.geomob.data.dataBase.GeoMobDao
-import com.e.geomob.data.model.HistoricalEvent
-import com.e.geomob.data.model.MediaObject
-import com.e.geomob.data.model.Personality
-import com.e.geomob.data.model.SlideItem
-import com.e.geomob.ui.data.model.Country
+import com.e.geomob.data.model.*
+import com.e.geomob.data.network.WikiApi
+import com.e.geomob.data.network.model.PageContent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.Dispatchers.Main
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class Repository(
-    private val geoMobDao: GeoMobDao
+    private val geoMobDao: GeoMobDao ,
+    private val api : WikiApi
 ) {
 
 
@@ -34,13 +30,6 @@ class Repository(
     val country : LiveData<Country>
         get()=_country
 
-
-    private val _media = MutableLiveData<List<MediaObject>>()
-
-    val media : LiveData<List<MediaObject>>
-        get()=_media
-
-
     private val _history = MutableLiveData<List<HistoricalEvent>>()
 
     val history : LiveData<List<HistoricalEvent>>
@@ -51,16 +40,22 @@ class Repository(
     val personality : LiveData<List<Personality>>
         get()=_personality
 
-
     private val _slide = MutableLiveData<List<SlideItem>>()
     val slide : LiveData<List<SlideItem>>
         get()=_slide
 
+    private val _resource = MutableLiveData<List<Resource>>()
+    val resource : LiveData<List<Resource>>
+        get()=_resource
 
+    private val _description = MutableLiveData<PageContent>()
 
+    val description : LiveData<PageContent>
+        get() = _description
 
-
-
+    val youtubeVideo : LiveData<List<YoutubeVideo>>
+        get() = _youtubeVideo
+    private val _youtubeVideo  = MutableLiveData<List<YoutubeVideo>>()
 
     fun getAllCountries() {
             CoroutineScope(IO).launch {
@@ -71,69 +66,60 @@ class Repository(
 
     fun initDataBase(
         countries: List<Country>
-    )
-    {
-       val job =  CoroutineScope(IO).launch {
-            for (country in countries) {
-                // for parallel access to the data base
-                launch {
-                    geoMobDao.initDataBase(country)
-                }
-            }
+    ) {
+         CoroutineScope(IO).launch {
+           geoMobDao.initDataBase(countries)
         }
-
     }
 
-    fun initHistory(
-        histories :List<HistoricalEvent>
+    fun initResources(
+        resources : List<Resource>
     ){
-        val job =  CoroutineScope(IO).launch {
-            for (history in histories) {
-                // for parallel access to the data base
-                launch {
-                    geoMobDao.initHistoricalEvents(history)
-                }
-            }
+        CoroutineScope(IO).launch {
+            geoMobDao.initResource(resources)
+        }
+    }
+
+    fun initYoutubeVideos(
+        videos: List<YoutubeVideo>
+    ){
+        CoroutineScope(IO).launch {
+            geoMobDao.initYoutubeVideos(videos)
+        }
+    }
+
+    fun initHistory(histories :List<HistoricalEvent>)
+    {
+         CoroutineScope(IO).launch {
+            geoMobDao.initHistoricalEvents(histories)
+            Log.d(Debug.TAG , "initHistory from Repository")
         }
     }
 
     fun initPersonality(
         personalities :List<Personality>
     ){
-        val job =  CoroutineScope(IO).launch {
-            for ( personality in personalities) {
-                // for parallel access to the data base
-                launch {
-                    geoMobDao.initPersonality(personality)
-                }
-            }
-        }
-    }
-
-    fun initMedia(
-        medias :List<MediaObject>
-    ){
-        val job =  CoroutineScope(IO).launch {
-            for ( media in medias) {
-                // for parallel access to the data base
-                launch {
-                    geoMobDao.initMediaObject(media)
-                }
-            }
+          CoroutineScope(IO).launch {
+            geoMobDao.initPersonality(personalities)
+            Log.d(Debug.TAG , "initPersonality from Repository")
         }
     }
 
     fun initSlideShow(
         slides :List<SlideItem>
     ){
-        val job =  CoroutineScope(IO).launch {
-            for ( slide in slides) {
-                // for parallel access to the data base
-                launch {
-                    geoMobDao.initSlideShow(slide)
-                }
-            }
+         CoroutineScope(IO).launch {
+            geoMobDao.initSlideShow(slides)
+            Log.d(Debug.TAG , "initSlideShow from Repository")
         }
+    }
+
+
+    suspend fun getDescriptionFromWiki( countryName: String) : PageContent{
+        Log.d(Debug.TAG , "got data from Wiki APi")
+
+        val wikiResponse  = api.getDescription(countryName =countryName)
+       return wikiResponse.body()!!.query.pages.page
     }
 
     fun getCountryById(countryId: Int) {
@@ -143,9 +129,6 @@ class Repository(
                _country.postValue(geoMobDao.getCountryById(countryId))
            }
             launch {
-                _media.postValue(geoMobDao.getVideos(countryId))
-            }
-            launch {
                 _history.postValue(geoMobDao.getHistoricalEvent(countryId))
             }
             launch {
@@ -153,6 +136,13 @@ class Repository(
             }
             launch {
                 _slide.postValue(geoMobDao.getSlidShow(countryId))
+            }
+            launch {
+                _resource.postValue(geoMobDao.getResources(countryId))
+            }
+
+            launch {
+                _youtubeVideo.postValue(geoMobDao.getYoutubeVideos(countryId))
             }
         }
 

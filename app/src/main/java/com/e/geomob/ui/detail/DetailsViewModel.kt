@@ -1,20 +1,21 @@
 package com.e.geomob.ui.detail
 
+import android.graphics.pdf.PdfDocument
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.e.geomob.Debug
-import com.e.geomob.data.model.HistoricalEvent
-import com.e.geomob.data.model.MediaObject
-import com.e.geomob.data.model.Personality
-import com.e.geomob.data.model.SlideItem
+import com.e.geomob.data.model.*
 
 import com.e.geomob.data.respository.Repository
-import com.e.geomob.ui.data.model.Country
+import com.e.geomob.data.model.Country
+import com.e.geomob.data.network.model.PageContent
 
 class DetailsViewModel (
     private val repository: Repository
 ){
+
+    private var loadingListener : OnLoadDataListener? = null
 
     init {
         repository.country.observeForever {
@@ -24,11 +25,6 @@ class DetailsViewModel (
         repository.history.observeForever {
             Log.d(Debug.TAG , it.toString())
             _history.postValue(it)
-        }
-
-        repository.media.observeForever {
-            Log.d(Debug.TAG , it.toString())
-            _media.postValue(it)
         }
 
         repository.personality.observeForever {
@@ -41,12 +37,24 @@ class DetailsViewModel (
            _slide.postValue(it)
         }
 
+        repository.resource.observeForever {
+            Log.d(Debug.TAG , it.toString())
+            _resource.postValue(it)
+        }
+
+        repository.description.observeForever {
+            _description.postValue(it)
+        }
+
+        repository.youtubeVideo.observeForever {
+            _youtubeVideo.postValue(it)
+        }
     }
 
-    private val _media = MutableLiveData<List<MediaObject>>()
 
-    val media : LiveData<List<MediaObject>>
-        get()=_media
+    val youtubeVideo : LiveData<List<YoutubeVideo>>
+        get() = _youtubeVideo
+    private val _youtubeVideo  = MutableLiveData<List<YoutubeVideo>>()
 
 
     private val _history = MutableLiveData<List<HistoricalEvent>>()
@@ -71,6 +79,34 @@ class DetailsViewModel (
     val country : LiveData<Country>
         get() =  _country
 
-    fun getCountry(countryId : Int) = repository.getCountryById(countryId)
+
+    val tweets : LiveData<Tweet>
+        get() = _tweets
+    private val _tweets = MutableLiveData<Tweet>()
+
+
+    val resource : LiveData<List<Resource>>
+        get() = _resource
+    private val _resource  = MutableLiveData<List<Resource>>()
+
+
+    val description : LiveData<PageContent>
+        get() = _description
+    private val _description  = MutableLiveData<PageContent>()
+
+
+    fun getCountry(countryId : Int) {
+        loadingListener?.let {
+            it.startLoading()
+        }
+        repository.getCountryById(countryId)
+        loadingListener?.let {
+            it.endLoading()
+        }
+    }
+
+    fun setLoadingListener(onLoadDataListener: OnLoadDataListener) {
+        loadingListener = onLoadDataListener
+    }
 
 }

@@ -17,7 +17,7 @@
         tools:layout="@layout/fragment_home"/>
     <fragment
         android:id="@+id/TweetsFragment"
-        android:name="com.e.geomob.ui.detail.TweetsFragment"
+        android:name="com.e.geomob.ui.detail.tweets.TweetsFragment"
         android:label="fragment_tweets"
         tools:layout="@layout/fragment_tweets" />
 </navigation>

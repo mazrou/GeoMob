@@ -1,6 +1,7 @@
 package com.e.geomob.ui.detail.video
 
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -10,11 +11,12 @@ import com.bumptech.glide.RequestManager
 import com.bumptech.glide.request.RequestOptions
 import com.e.geomob.Debug
 import com.e.geomob.R
-import com.e.geomob.ui.recyclerView.VideoPlayerRecyclerAdapter
-import com.e.geomob.data.model.MediaObject
+import com.e.geomob.data.model.YoutubeVideo
 import com.e.geomob.ui.detail.DetailsViewModel
-import com.e.geomob.ui.recyclerView.util.VerticalSpacingItemDecorator
+import com.e.geomob.ui.main.CountryListDecorator
+
 import kotlinx.android.synthetic.main.fragment_videos.*
+import kotlinx.coroutines.CoroutineScope
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.x.closestKodein
@@ -23,40 +25,35 @@ import java.util.ArrayList
 
 class VideosFragment() : Fragment(R.layout.fragment_videos) , KodeinAware {
 
-    override val kodein: Kodein by closestKodein()
 
-    private val viewModel : DetailsViewModel by instance<DetailsViewModel>()
+    override val kodein by closestKodein()
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    private val viewModel : DetailsViewModel by instance()
 
-        var list : List<MediaObject>? = null
+    val adapter  = VideoRecyclerViewAdapter()
 
-        viewModel.media.observe(viewLifecycleOwner, Observer { videos ->
-            list = videos
-            println(Debug.TAG + list!!.size)
-            val adapter =  VideoPlayerRecyclerAdapter(list as ArrayList<MediaObject>,initGlide())
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
 
-            recycler_view.also {
-                it.adapter =adapter
-                it.layoutManager = LinearLayoutManager(requireContext())
-                it.setHasFixedSize(true)
-                it.setMediaObjects(list as ArrayList<MediaObject>)
-                it.addItemDecoration(
-                    VerticalSpacingItemDecorator(20)
-                )
-            }
+        subscribeObserver()
+        initRecyclerView()
+    }
+
+    private fun subscribeObserver(){
+        viewModel.youtubeVideo.observe(viewLifecycleOwner , Observer {
+            adapter.submitList(it)
         })
+    }
 
-
+    private fun initRecyclerView (){
+        video_recyclerView.also {
+            it.layoutManager = LinearLayoutManager(requireContext())
+            it.adapter  = adapter
+            it.setHasFixedSize(true)
+            it.addItemDecoration(CountryListDecorator(18))
+        }
     }
 
 
-    private fun initGlide(): RequestManager? {
-        val options = RequestOptions()
-            .placeholder(R.drawable.white_background)
-            .error(R.drawable.white_background)
-        return Glide.with(this)
-            .setDefaultRequestOptions(options)
-    }
+
 }

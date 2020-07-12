@@ -16,6 +16,7 @@ class CountryListDecorator(
     ) {
         super.getItemOffsets(outRect, view, parent, state)
         outRect.bottom = padding
+        outRect.right = padding
     }
 
 }

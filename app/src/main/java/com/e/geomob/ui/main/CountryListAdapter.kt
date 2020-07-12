@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.blongho.country_data.World
 import com.e.geomob.R
-import com.e.geomob.ui.data.model.Country
+import com.e.geomob.data.model.Country
 import kotlinx.android.synthetic.main.country_list_item.view.*
 
 
@@ -21,7 +21,7 @@ class CountryListAdapter(
     private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<Country>() {
 
         override fun areItemsTheSame(oldItem: Country, newItem: Country): Boolean {
-            return oldItem.id == newItem.id
+            return oldItem.country_id == newItem.country_id
         }
 
         override fun areContentsTheSame(oldItem: Country, newItem: Country): Boolean {
@@ -72,6 +72,8 @@ class CountryListAdapter(
         fun bind( country : Country) = with(itemView){
             flag_image.setImageResource(World.getFlagOf(country.name))
             country_name.text = country.name
+            capital.text = country.capital
+            currency.text = country.currency
 
             itemView.setOnClickListener {
                 interaction!!.onItemSelected(adapterPosition, country)
@@ -98,6 +100,6 @@ class CountryListAdapter(
 
     interface Interaction {
         fun onItemSelected(position: Int, item: Country)
-        fun mediaPlayerButtonListener(position: Int , item: Country , holder: CountryItemViewHolder)
+        fun mediaPlayerButtonListener(position: Int, item: Country, holder: CountryItemViewHolder)
     }
 }

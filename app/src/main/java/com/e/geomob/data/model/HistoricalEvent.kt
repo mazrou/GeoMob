@@ -1,20 +1,27 @@
 package com.e.geomob.data.model
 
-import android.accounts.AuthenticatorDescription
-import android.icu.text.CaseMap
 import androidx.room.Entity
+import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
-import com.e.geomob.ui.data.model.Country
-import java.sql.Date
 
 
-@Entity(tableName = "historical_event")
+@Entity(tableName = "historical_event"
+    ,foreignKeys = [ForeignKey(
+        entity = Country::class,
+        parentColumns = arrayOf("country_id"),
+        childColumns = arrayOf("country_id"),
+        onDelete = ForeignKey.CASCADE
+    )]
+)
 class HistoricalEvent(
     @PrimaryKey
     val  id : Int ,
-    val country_id:  Int,
+    val country_id : Int ,
     val title: String,
-    val date : String,
     val description: String ,
+
+    val date : String? = null,
+
     val image : Int? = null
+
 )
